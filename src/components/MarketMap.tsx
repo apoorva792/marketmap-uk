@@ -109,12 +109,10 @@ const MarketMap = () => {
         .market-tiles {
           display: flex;
           flex-wrap: wrap;
-          gap: 12px;
+          justify-content: center;
+          gap: 14px;
           align-content: center;
-          background: rgba(255, 255, 255, 0.45);
-          border: 1px solid rgba(74, 47, 45, 0.07);
-          border-radius: 16px;
-          padding: 14px;
+          padding: 4px 0;
         }
         .market-tile {
           display: flex;

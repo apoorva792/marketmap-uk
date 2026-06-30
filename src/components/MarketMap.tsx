@@ -32,7 +32,7 @@ const Tile = ({ company }: { company: Company }) => (
   </button>
 );
 
-const MarketMap = () => {
+const MarketMap = ({ compact = false }: { compact?: boolean }) => {
   const rows = CATEGORY_ORDER.map((cat, i) => ({
     cat,
     num: ROW_NUM[i] ?? String(i + 1).padStart(2, "0"),
@@ -40,7 +40,7 @@ const MarketMap = () => {
   }));
 
   return (
-    <div className="market-map">
+    <div className={`market-map${compact ? " market-map--compact" : ""}`}>
       {rows.map(({ cat, num, items }) => (
         <div className="market-row" key={cat}>
           <div className="market-label">
@@ -173,6 +173,35 @@ const MarketMap = () => {
         @media (max-width: 520px) {
           .market-tile { width: calc((100% - 24px) / 3); }
           .market-tile-name { font-size: 10.5px; }
+        }
+
+        /* Compact variant — used in the hero's right column */
+        .market-map--compact { gap: 9px; }
+        .market-map--compact .market-row { grid-template-columns: 118px 1fr; gap: 11px; }
+        .market-map--compact .market-label {
+          padding: 10px 13px;
+          min-height: 0;
+          border-radius: 13px;
+        }
+        .market-map--compact .market-label-num { font-size: 9px; top: 8px; right: 11px; }
+        .market-map--compact .market-label-text { font-size: 9.5px; letter-spacing: 0.05em; line-height: 1.25; }
+        .market-map--compact .market-label-count { font-size: 9px; }
+        .market-map--compact .market-tiles { gap: 8px; padding: 0; }
+        .market-map--compact .market-tile {
+          width: 66px;
+          padding: 9px 5px 8px;
+          border-radius: 11px;
+          gap: 5px;
+        }
+        .market-map--compact .market-tile-logo { width: 36px; height: 36px; border-radius: 8px; }
+        .market-map--compact .market-tile-logo img { width: 27px; height: 27px; }
+        .market-map--compact .market-tile-name { font-size: 9px; line-height: 1.15; }
+        @media (max-width: 1024px) {
+          .market-map--compact .market-row { grid-template-columns: 1fr; gap: 8px; }
+          .market-map--compact .market-label { flex-direction: row; align-items: center; }
+          .market-map--compact .market-label-num { position: static; order: 3; }
+          .market-map--compact .market-label-text { flex: 1; }
+          .market-map--compact .market-tile { width: 76px; }
         }
       `}</style>
     </div>

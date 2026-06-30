@@ -15,6 +15,8 @@ interface TheListSectionProps {
   onRegionFilterChange: (regions: string[]) => void;
   tagFilter: string[];
   onTagFilterChange: (tags: string[]) => void;
+  verticalFilter: string;
+  onVerticalFilterChange: (vertical: string) => void;
 }
 
 const Eyebrow = ({ children }: { children: React.ReactNode }) => (
@@ -37,6 +39,8 @@ const TheListSection = ({
   onRegionFilterChange,
   tagFilter,
   onTagFilterChange,
+  verticalFilter,
+  onVerticalFilterChange,
 }: TheListSectionProps) => {
   return (
     <section id="the-list" className="pt-20 sm:pt-24 pb-8" style={{ scrollMarginTop: 80 }}>
@@ -48,7 +52,7 @@ const TheListSection = ({
             Find your badge <em style={{ fontStyle: "italic", color: "#C96A5A" }}>here</em>
           </h2>
           <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 16, color: "#7A6A60", marginBottom: 28 }}>
-            19 firms across 5 service capabilities.
+            Filter by capability and vertical, or search by name.
           </p>
 
           {/* Search (moved from hero) */}
@@ -74,6 +78,8 @@ const TheListSection = ({
         onFilterChange={onFilterChange}
         sort={sort}
         onSortChange={onSortChange}
+        verticalFilter={verticalFilter}
+        onVerticalFilterChange={onVerticalFilterChange}
         regionFilter={regionFilter}
         onRegionFilterChange={onRegionFilterChange}
         tagFilter={tagFilter}

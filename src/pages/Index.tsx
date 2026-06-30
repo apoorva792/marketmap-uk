@@ -19,6 +19,7 @@ const Index = () => {
 
   const [regionFilter, setRegionFilter] = useState<string[]>([]);
   const [tagFilter, setTagFilter] = useState<string[]>([]);
+  const [verticalFilter, setVerticalFilter] = useState("All");
   const [hasInteracted, setHasInteracted] = useState(false);
   const [bannerDismissed, setBannerDismissed] = useState(false);
 
@@ -73,10 +74,15 @@ const Index = () => {
     setHasInteracted(true);
   };
 
-  const filtered = useMemo(
-    () => getFilteredCompanies(companies, search, activeFilter, sort, "All", regionFilter, tagFilter),
-    [search, activeFilter, sort, regionFilter, tagFilter]
-  );
+  const handleVerticalFilterChange = (vertical: string) => {
+    setVerticalFilter(vertical);
+    setHasInteracted(true);
+  };
+
+  const filtered = useMemo(() => {
+    const result = getFilteredCompanies(companies, search, activeFilter, sort, "All", regionFilter, tagFilter);
+    return verticalFilter === "All" ? result : result.filter((c) => c.vertical === verticalFilter);
+  }, [search, activeFilter, sort, regionFilter, tagFilter, verticalFilter]);
 
   return (
     <PageWrapper>
@@ -100,6 +106,8 @@ const Index = () => {
         onRegionFilterChange={handleRegionFilterChange}
         tagFilter={tagFilter}
         onTagFilterChange={handleTagFilterChange}
+        verticalFilter={verticalFilter}
+        onVerticalFilterChange={handleVerticalFilterChange}
       />
 
       <FindCompanyPopup hasInteracted={hasInteracted} />

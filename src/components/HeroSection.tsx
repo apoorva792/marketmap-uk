@@ -5,10 +5,10 @@ const scrollTo = (id: string) =>
 
 const HeroSection = () => {
   return (
-    <section className="pt-10 sm:pt-14 lg:pt-16 pb-8 px-5 sm:px-10 lg:px-16">
-      <div className="max-w-[1300px] mx-auto flex flex-col lg:flex-row items-center gap-10 lg:gap-14">
-        {/* LEFT: title block */}
-        <div className="w-full lg:w-[37%] flex flex-col items-center lg:items-start text-center lg:text-left">
+    <section className="pt-14 sm:pt-20 lg:pt-24 pb-12 px-5 sm:px-10 lg:px-16">
+      <div className="max-w-[1280px] mx-auto">
+        {/* Centered editorial title — occupies the hero */}
+        <div className="text-center flex flex-col items-center">
           {/* Market map pill */}
           <div
             className="inline-flex items-center px-4 py-1.5 rounded-full mb-6"
@@ -28,11 +28,11 @@ const HeroSection = () => {
           {/* Big headline */}
           <h1 style={{
             fontFamily: "'Playfair Display', serif",
-            fontSize: "clamp(32px, 3.6vw, 50px)",
+            fontSize: "clamp(36px, 5.5vw, 60px)",
             fontWeight: 400,
             color: "#2A1F1A",
-            lineHeight: 1.08,
-            marginBottom: 12,
+            lineHeight: 1.06,
+            marginBottom: 14,
             letterSpacing: "-0.01em",
           }}>
             Agentic AI Services <em style={{ fontStyle: "italic", color: "#C96A5A" }}>Leaders</em>
@@ -40,7 +40,7 @@ const HeroSection = () => {
 
           <p style={{
             fontFamily: "'DM Sans', sans-serif",
-            fontSize: 14,
+            fontSize: 15,
             fontWeight: 600,
             letterSpacing: "0.04em",
             color: "#6B4C4C",
@@ -53,11 +53,11 @@ const HeroSection = () => {
           {/* Subtext */}
           <p style={{
             fontFamily: "'DM Sans', sans-serif",
-            fontSize: 16,
+            fontSize: 17,
             color: "#7A6A60",
             lineHeight: 1.6,
-            maxWidth: 440,
-            marginBottom: 26,
+            maxWidth: 640,
+            marginBottom: 28,
           }}>
             The mid-market services firms shipping agentic AI in production &mdash;
             mapped by what they deliver and the industries they serve. Curated by Lyzr.
@@ -87,9 +87,18 @@ const HeroSection = () => {
           </div>
         </div>
 
-        {/* RIGHT: market map */}
-        <div className="w-full lg:w-[63%]">
-          <MarketMap compact />
+        {/* Market map — framed in a rectangle so the centered rows read as one whole unit */}
+        <div
+          style={{
+            marginTop: "clamp(40px, 6vw, 72px)",
+            background: "#FBF8F4",
+            border: "1px solid rgba(74, 47, 45, 0.10)",
+            borderRadius: 26,
+            padding: "clamp(20px, 2.6vw, 36px)",
+            boxShadow: "0 24px 60px rgba(42, 26, 24, 0.07)",
+          }}
+        >
+          <MarketMap />
         </div>
       </div>
     </section>

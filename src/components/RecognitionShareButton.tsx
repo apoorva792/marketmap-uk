@@ -36,7 +36,7 @@ function drawBadgeCanvas(
 ): Promise<void> {
   return new Promise((resolve) => {
     const w = 512;
-    const h = 536;
+    const h = 580;
     canvas.width = w;
     canvas.height = h;
     const ctx = canvas.getContext("2d")!;
@@ -118,21 +118,6 @@ function drawBadgeCanvas(
     const chipX = w - bw - 22 - chipW;
     const chipY = bandTop + (bandH - chipH) / 2;
 
-    // Award chevron accent near the point (two parallel strokes)
-    function chevron(yTip: number, color: string, lw: number) {
-      const dx = 70;
-      const dy = 40;
-      ctx.beginPath();
-      ctx.moveTo(w / 2 - dx, yTip - dy);
-      ctx.lineTo(w / 2, yTip);
-      ctx.lineTo(w / 2 + dx, yTip - dy);
-      ctx.lineWidth = lw;
-      ctx.strokeStyle = color;
-      ctx.lineJoin = "round";
-      ctx.lineCap = "round";
-      ctx.stroke();
-    }
-
     // Load the company logo (top-left), then the Lyzr logo (top-right), then the text
     const logoImg = new Image();
     logoImg.crossOrigin = "anonymous";
@@ -187,18 +172,14 @@ function drawBadgeCanvas(
       // "Agentic AI Services Leader" — solid black, two lines.
       ctx.fillStyle = INK;
       ctx.font = "800 54px 'DM Sans', sans-serif";
-      ctx.fillText("Agentic AI", w / 2, 268);
+      ctx.fillText("Agentic AI", w / 2, 286);
       ctx.font = "800 47px 'DM Sans', sans-serif";
-      ctx.fillText("Services Leader", w / 2, 320);
+      ctx.fillText("Services Leader", w / 2, 338);
 
       // Subtitle
       ctx.fillStyle = SUBTLE;
       ctx.font = "600 18px 'DM Sans', sans-serif";
-      ctx.fillText("UK & Ireland · 2026 Map", w / 2, 362);
-
-      // Award chevron accent near the point.
-      chevron(486, INK, 7);
-      chevron(500, ACCENT, 7);
+      ctx.fillText("UK & Ireland · 2026 Map", w / 2, 380);
 
       resolve();
     }
@@ -349,7 +330,7 @@ const RecognitionShareButton = ({ companyName }: RecognitionShareButtonProps) =>
             </button>
 
             {/* Two-column layout: Badge left, Content right */}
-            <div className={`flex ${isMobile ? "flex-col items-center gap-6" : "flex-row gap-10 items-start"}`}>
+            <div className={`flex ${isMobile ? "flex-col items-center gap-6" : "flex-row gap-10 items-center"}`}>
               {/* LEFT: Badge - rendered as HTML (instant, like cards) */}
               <div className="shrink-0 flex flex-col items-center">
                 <div
@@ -370,7 +351,7 @@ const RecognitionShareButton = ({ companyName }: RecognitionShareButtonProps) =>
                       clipPath: "polygon(0 0, 100% 0, 100% 73%, 50% 100%, 0 73%)",
                       position: "relative",
                       overflow: "hidden",
-                      paddingBottom: 66,
+                      paddingBottom: 92,
                     }}>
                       {/* Top band */}
                       <div style={{
@@ -402,11 +383,6 @@ const RecognitionShareButton = ({ companyName }: RecognitionShareButtonProps) =>
                           UK & Ireland · 2026 Map
                         </div>
                       </div>
-                      {/* Award chevron accent near the point */}
-                      <svg width="150" height="58" viewBox="0 0 150 58" fill="none" style={{ position: "absolute", left: "50%", bottom: 16, transform: "translateX(-50%)" }} aria-hidden>
-                        <polyline points="22,8 75,40 128,8" stroke="#111111" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
-                        <polyline points="22,24 75,56 128,24" stroke="#C9C9C9" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
                     </div>
                   </div>
                 </div>

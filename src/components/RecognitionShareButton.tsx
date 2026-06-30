@@ -43,15 +43,14 @@ function drawBadgeCanvas(
 
     ctx.clearRect(0, 0, w, h);
 
-    // Palette (from the reference badge)
-    const BORDER = "#241B14";
-    const BAND = "#E9DCC2";
-    const BODY = "#F1E9D7";
-    const BROWN = "#6E5142";
+    // Monochrome award badge — white face, black border & text.
+    const INK = "#111111";
+    const SUBTLE = "#6B7280";
+    const ACCENT = "#C9C9C9";
 
-    const bw = 11;                 // border thickness
+    const bw = 13;                 // border thickness
     const shoulderY = Math.round(h * 0.74);
-    const r = 16;                  // top corner radius
+    const r = 18;                  // top corner radius
 
     // Trace a shield (flat top, straight sides, pointed bottom, rounded top corners)
     function shield(x: number, y: number, ww: number, hh: number, shY: number, rr: number) {
@@ -76,39 +75,25 @@ function drawBadgeCanvas(
       ctx.closePath();
     }
 
-    // Outer dark border (clean single border, no inner gradient frame)
+    // Outer black border
     shield(0, 0, w, h, shoulderY, r);
-    ctx.fillStyle = BORDER;
+    ctx.fillStyle = INK;
     ctx.fill();
 
-    // Inner cream body
+    // Inner white body
     shield(bw, bw, w - bw * 2, h - bw * 2, shoulderY - bw, r - 4);
-    ctx.fillStyle = BODY;
+    ctx.fillStyle = "#FFFFFF";
     ctx.fill();
 
-    // Top band (clipped to the inner shield so it respects the rounded top)
+    // Top band geometry + crisp black divider (clipped to the inner shield)
     const bandTop = bw;
-    const bandH = 76;
+    const bandH = 96;
     const bandBottom = bandTop + bandH;
     ctx.save();
     shield(bw, bw, w - bw * 2, h - bw * 2, shoulderY - bw, r - 4);
     ctx.clip();
-    ctx.fillStyle = BAND;
-    ctx.fillRect(bw, bandTop, w - bw * 2, bandH);
-    // Brown angled section on the right
-    const brownTopX = w * 0.56;
-    const brownBotX = w * 0.64;
-    ctx.fillStyle = BROWN;
-    ctx.beginPath();
-    ctx.moveTo(brownTopX, bandTop);
-    ctx.lineTo(w - bw, bandTop);
-    ctx.lineTo(w - bw, bandBottom);
-    ctx.lineTo(brownBotX, bandBottom);
-    ctx.closePath();
-    ctx.fill();
-    // Thin divider under the band
-    ctx.strokeStyle = "rgba(36,27,20,0.12)";
-    ctx.lineWidth = 1;
+    ctx.strokeStyle = INK;
+    ctx.lineWidth = 2.5;
     ctx.beginPath();
     ctx.moveTo(bw, bandBottom);
     ctx.lineTo(w - bw, bandBottom);
@@ -116,54 +101,53 @@ function drawBadgeCanvas(
     ctx.restore();
 
     // Company logo chip (TOP-LEFT)
-    const cs = 46;
-    const cx = bw + 18;
+    const cs = 54;
+    const cx = bw + 22;
     const cy = bandTop + (bandH - cs) / 2;
-    ctx.save();
     ctx.fillStyle = "#FFFFFF";
-    roundRectPath(cx, cy, cs, cs, 11);
+    roundRectPath(cx, cy, cs, cs, 12);
     ctx.fill();
-    ctx.strokeStyle = "rgba(36,27,20,0.12)";
-    ctx.lineWidth = 1;
-    roundRectPath(cx, cy, cs, cs, 11);
+    ctx.strokeStyle = INK;
+    ctx.lineWidth = 1.5;
+    roundRectPath(cx, cy, cs, cs, 12);
     ctx.stroke();
-    ctx.restore();
 
-    // Raised inner panel behind the text (soft shadow → layered look)
-    const px = bw + 20;
-    const py = bandBottom + 20;
-    const pw = w - px * 2;
-    const ph = 280;
-    ctx.save();
-    ctx.shadowColor = "rgba(60,40,20,0.20)";
-    ctx.shadowBlur = 16;
-    ctx.shadowOffsetY = 5;
-    ctx.fillStyle = "#F6F0E0";
-    roundRectPath(px, py, pw, ph, 16);
-    ctx.fill();
-    ctx.restore();
-
-    // Lyzr chip (TOP-RIGHT, on the brown section)
-    const chipW = 104;
-    const chipH = 40;
-    const chipX = w - bw - 18 - chipW;
+    // Lyzr chip (TOP-RIGHT)
+    const chipW = 110;
+    const chipH = 46;
+    const chipX = w - bw - 22 - chipW;
     const chipY = bandTop + (bandH - chipH) / 2;
+
+    // Award chevron accent near the point (two parallel strokes)
+    function chevron(yTip: number, color: string, lw: number) {
+      const dx = 70;
+      const dy = 40;
+      ctx.beginPath();
+      ctx.moveTo(w / 2 - dx, yTip - dy);
+      ctx.lineTo(w / 2, yTip);
+      ctx.lineTo(w / 2 + dx, yTip - dy);
+      ctx.lineWidth = lw;
+      ctx.strokeStyle = color;
+      ctx.lineJoin = "round";
+      ctx.lineCap = "round";
+      ctx.stroke();
+    }
 
     // Load the company logo (top-left), then the Lyzr logo (top-right), then the text
     const logoImg = new Image();
     logoImg.crossOrigin = "anonymous";
     logoImg.onload = () => {
       ctx.save();
-      roundRectPath(cx + 4, cy + 4, cs - 8, cs - 8, 8);
+      roundRectPath(cx + 5, cy + 5, cs - 10, cs - 10, 8);
       ctx.clip();
-      ctx.drawImage(logoImg, cx + 5, cy + 5, cs - 10, cs - 10);
+      ctx.drawImage(logoImg, cx + 6, cy + 6, cs - 12, cs - 12);
       ctx.restore();
       loadLyzrLogo();
     };
     logoImg.onerror = () => {
       ctx.save();
-      ctx.fillStyle = BROWN;
-      ctx.font = "bold 24px 'DM Sans', sans-serif";
+      ctx.fillStyle = INK;
+      ctx.font = "bold 26px 'DM Sans', sans-serif";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.fillText(companyName.charAt(0).toUpperCase(), cx + cs / 2, cy + cs / 2);
@@ -175,12 +159,14 @@ function drawBadgeCanvas(
     function loadLyzrLogo() {
       const lz = new Image();
       lz.onload = () => {
-        ctx.save();
         ctx.fillStyle = "#FFFFFF";
-        roundRectPath(chipX, chipY, chipW, chipH, 9);
+        roundRectPath(chipX, chipY, chipW, chipH, 10);
         ctx.fill();
-        ctx.restore();
-        const pad = 8;
+        ctx.strokeStyle = INK;
+        ctx.lineWidth = 1.5;
+        roundRectPath(chipX, chipY, chipW, chipH, 10);
+        ctx.stroke();
+        const pad = 9;
         const availW = chipW - pad * 2;
         const availH = chipH - pad * 2;
         const ratio = lz.width && lz.height ? lz.width / lz.height : 2.8;
@@ -198,19 +184,21 @@ function drawBadgeCanvas(
       ctx.textAlign = "center";
       ctx.textBaseline = "alphabetic";
 
-      // "Agentic AI" (dark) + "Services Leader" (brown)
-      ctx.fillStyle = "#1C1813";
-      ctx.font = "800 50px 'DM Sans', sans-serif";
-      ctx.fillText("Agentic AI", w / 2, py + 100);
-
-      ctx.fillStyle = "#8E6E58";
-      ctx.font = "800 44px 'DM Sans', sans-serif";
-      ctx.fillText("Services Leader", w / 2, py + 150);
+      // "Agentic AI Services Leader" — solid black, two lines.
+      ctx.fillStyle = INK;
+      ctx.font = "800 54px 'DM Sans', sans-serif";
+      ctx.fillText("Agentic AI", w / 2, 268);
+      ctx.font = "800 47px 'DM Sans', sans-serif";
+      ctx.fillText("Services Leader", w / 2, 320);
 
       // Subtitle
-      ctx.fillStyle = "#3A342B";
-      ctx.font = "500 18px 'DM Sans', sans-serif";
-      ctx.fillText("UK & Ireland · 2026 Map", w / 2, py + 192);
+      ctx.fillStyle = SUBTLE;
+      ctx.font = "600 18px 'DM Sans', sans-serif";
+      ctx.fillText("UK & Ireland · 2026 Map", w / 2, 362);
+
+      // Award chevron accent near the point.
+      chevron(486, INK, 7);
+      chevron(500, ACCENT, 7);
 
       resolve();
     }
@@ -371,59 +359,54 @@ const RecognitionShareButton = ({ companyName }: RecognitionShareButtonProps) =>
                     overflow: "visible",
                   }}
                 >
-                  {/* Badge shape via CSS clip-path, clean dark border, no inner gradient frame */}
+                  {/* Monochrome award badge — white face, crisp black border */}
                   <div style={{
-                    background: "#241B14",
+                    background: "#111111",
                     clipPath: "polygon(0 0, 100% 0, 100% 75%, 50% 100%, 0 75%)",
                     padding: 7,
                   }}>
                     <div style={{
-                      background: "#ECE3CF",
+                      background: "#FFFFFF",
                       clipPath: "polygon(0 0, 100% 0, 100% 73%, 50% 100%, 0 73%)",
                       position: "relative",
                       overflow: "hidden",
                       paddingBottom: 66,
                     }}>
                       {/* Top band */}
-                      <div style={{ position: "relative", height: 62, background: "#E7DABF", overflow: "hidden" }}>
-                        {/* Brown angled section (right) with the Lyzr logo */}
-                        <div style={{
-                          position: "absolute", top: 0, right: 0, bottom: 0, width: "47%",
-                          background: "#6B4E3F",
-                          clipPath: "polygon(24% 0, 100% 0, 100% 100%, 0 100%)",
-                          display: "flex", alignItems: "center", justifyContent: "flex-end",
-                          paddingRight: 12,
-                        }}>
-                          <div style={{ background: "#FFFFFF", borderRadius: 7, padding: "5px 8px", display: "flex", alignItems: "center" }}>
-                            <img src={lyzrLogoSrc} alt="Lyzr" style={{ height: 13, objectFit: "contain", display: "block" }} />
-                          </div>
-                        </div>
+                      <div style={{
+                        position: "relative", height: 60, background: "#FFFFFF",
+                        borderBottom: "2px solid #111111",
+                        display: "flex", alignItems: "center", justifyContent: "space-between",
+                        padding: "0 14px",
+                      }}>
                         {/* Company logo (left) */}
                         <img
                           src={companyLogoUrl}
                           alt={companyName}
-                          style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", width: 36, height: 36, borderRadius: 9, objectFit: "contain", background: "#fff", border: "1px solid rgba(36,27,20,0.12)" }}
+                          style={{ width: 38, height: 38, borderRadius: 8, objectFit: "contain", background: "#fff", border: "1px solid #111111" }}
                         />
+                        {/* Lyzr logo (right) */}
+                        <div style={{ background: "#FFFFFF", borderRadius: 7, padding: "5px 9px", display: "flex", alignItems: "center", border: "1px solid #111111" }}>
+                          <img src={lyzrLogoSrc} alt="Lyzr" style={{ height: 13, objectFit: "contain", display: "block" }} />
+                        </div>
                       </div>
-                      {/* Raised inner panel behind the text */}
-                      <div style={{
-                        margin: "14px 12px 0",
-                        background: "#F6F0E0",
-                        borderRadius: 13,
-                        boxShadow: "0 3px 14px rgba(60,40,20,0.13)",
-                        padding: "28px 14px 40px",
-                        textAlign: "center",
-                      }}>
-                        <div style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 800, fontSize: 31, lineHeight: 1.0, color: "#1C1813" }}>
+                      {/* Text */}
+                      <div style={{ padding: "30px 14px 0", textAlign: "center" }}>
+                        <div style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 800, fontSize: 31, lineHeight: 1.0, color: "#111111", letterSpacing: "-0.01em" }}>
                           Agentic AI
                         </div>
-                        <div style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 800, fontSize: 26, lineHeight: 1.08, color: "#8E6E58", marginTop: 2 }}>
+                        <div style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 800, fontSize: 28, lineHeight: 1.08, color: "#111111", marginTop: 2, letterSpacing: "-0.01em" }}>
                           Services Leader
                         </div>
-                        <div style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: 12.5, color: "#3A342B", marginTop: 12 }}>
+                        <div style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 12, color: "#6B7280", marginTop: 12, letterSpacing: "0.02em" }}>
                           UK & Ireland · 2026 Map
                         </div>
                       </div>
+                      {/* Award chevron accent near the point */}
+                      <svg width="150" height="58" viewBox="0 0 150 58" fill="none" style={{ position: "absolute", left: "50%", bottom: 16, transform: "translateX(-50%)" }} aria-hidden>
+                        <polyline points="22,8 75,40 128,8" stroke="#111111" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
+                        <polyline points="22,24 75,56 128,24" stroke="#C9C9C9" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
                     </div>
                   </div>
                 </div>

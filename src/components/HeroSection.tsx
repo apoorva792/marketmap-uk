@@ -87,17 +87,8 @@ const HeroSection = () => {
           </div>
         </div>
 
-        {/* Market map — framed in a rectangle so the centered rows read as one whole unit */}
-        <div
-          style={{
-            marginTop: "clamp(40px, 6vw, 72px)",
-            background: "#FBF8F4",
-            border: "1px solid rgba(74, 47, 45, 0.10)",
-            borderRadius: 26,
-            padding: "clamp(20px, 2.6vw, 36px)",
-            boxShadow: "0 24px 60px rgba(42, 26, 24, 0.07)",
-          }}
-        >
+        {/* Market map — self-contained billboard board */}
+        <div style={{ marginTop: "clamp(40px, 6vw, 72px)" }}>
           <MarketMap />
         </div>
       </div>

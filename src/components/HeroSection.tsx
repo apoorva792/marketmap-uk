@@ -1,4 +1,4 @@
-import MarketMap from "./MarketMap";
+import LogoMarquee from "./LogoMarquee";
 
 const scrollTo = (id: string) =>
   document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -87,9 +87,9 @@ const HeroSection = () => {
           </div>
         </div>
 
-        {/* Market map — self-contained billboard board */}
+        {/* Moving logo marquee */}
         <div style={{ marginTop: "clamp(40px, 6vw, 72px)" }}>
-          <MarketMap />
+          <LogoMarquee />
         </div>
       </div>
     </section>

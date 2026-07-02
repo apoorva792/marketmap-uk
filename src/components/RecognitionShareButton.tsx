@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { Copy, X, Check, Linkedin, Twitter, Download, Loader2 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { getCompanyLogoUrl } from "@/data/companyLogos";
+import { getRecognition } from "@/data/companyRecognition";
 import lyzrLogoSrc from "@/assets/lyzr-logo-official.webp";
 import GatedDialog from "./GatedDialog";
 import LeadFormDialog from "./LeadFormDialog";
@@ -23,10 +24,16 @@ function slugify(name: string): string {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 }
 
-const SHARE_MESSAGE =
-  "Recognised as an Agentic AI Services Leader on the Lyzr 2026 Agentic AI Services Map — UK & Ireland, among the mid-market services firms shipping agentic AI in production.\n\n" +
-  "Lyzr powers production AI agents across 100+ enterprises. Being named among UK & Ireland's agentic AI services leaders in 2026 reflects the work our team puts into getting AI past the pilot and into production for our clients.\n\n" +
-  "#AgenticAI #EnterpriseAI #AIServices";
+const REGION_LABEL = "UK & Ireland";
+
+// Short caption for the LinkedIn / X share (posted alongside a link to the map page).
+function shareCaption(companyName: string) {
+  return `${companyName} has been recognised as an Agentic AI Services Leader on Lyzr's 2026 Agentic AI Services Map — ${REGION_LABEL}. #AgenticAI #EnterpriseAI #AIServices`;
+}
+
+function currentPageUrl() {
+  return typeof window !== "undefined" ? window.location.href.split("#")[0] : "";
+}
 
 /** Draw a G2-style badge with Lyzr colors using canvas */
 function drawBadgeCanvas(
@@ -201,9 +208,9 @@ const RecognitionShareButton = ({ companyName }: RecognitionShareButtonProps) =>
   const overlayRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
 
-  const message = SHARE_MESSAGE;
   const close = useCallback(() => setOpen(false), []);
   const companyLogoUrl = getCompanyLogoUrl(companyName);
+  const recognition = getRecognition(companyName);
 
   // Generate badge when modal opens
   useEffect(() => {
@@ -220,13 +227,6 @@ const RecognitionShareButton = ({ companyName }: RecognitionShareButtonProps) =>
     document.addEventListener("keydown", handler);
     return () => document.removeEventListener("keydown", handler);
   }, [open, close]);
-
-  const handleCopy = async () => {
-    await navigator.clipboard.writeText(message);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-    trackEvent("badge_copy_message", { company: companyName });
-  };
 
   // Trigger the actual PNG download. Called only after the email gate is passed.
   const performDownload = () => {
@@ -270,14 +270,15 @@ const RecognitionShareButton = ({ companyName }: RecognitionShareButtonProps) =>
 
   const handleLinkedIn = () => {
     trackEvent("badge_share", { company: companyName, channel: "linkedin" });
-    const url = `https://www.linkedin.com/feed/?shareActive=true&text=${encodeURIComponent(message)}`;
+    const text = `${shareCaption(companyName)}\n\n${currentPageUrl()}`;
+    const url = `https://www.linkedin.com/feed/?shareActive=true&text=${encodeURIComponent(text)}`;
     window.open(url, "_blank", "noopener,noreferrer");
     close();
   };
 
   const handleTwitter = () => {
     trackEvent("badge_share", { company: companyName, channel: "twitter" });
-    const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}`;
+    const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareCaption(companyName))}&url=${encodeURIComponent(currentPageUrl())}`;
     window.open(url, "_blank", "noopener,noreferrer");
     close();
   };
@@ -413,46 +414,45 @@ const RecognitionShareButton = ({ companyName }: RecognitionShareButtonProps) =>
                   fontFamily: "'DM Sans', sans-serif",
                   fontSize: 15,
                   color: "#8A6060",
-                  marginBottom: 24,
+                  marginBottom: 22,
                 }}>
                   {companyName} · Recognised by Lyzr, 2026
                 </p>
 
-                {/* Message preview - full visible, no scroll */}
-                <div
-                  className="w-full cursor-pointer mb-5 select-all"
-                  onClick={() => { navigator.clipboard.writeText(message); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
-                  style={{
-                    background: "#FFFFFF",
-                    border: "1px solid rgba(74,47,45,0.1)",
-                    borderRadius: 12,
-                    padding: 16,
-                    fontFamily: "'DM Sans', sans-serif",
-                    fontSize: 13,
-                    color: "#2A1F1A",
-                    lineHeight: 1.7,
-                    whiteSpace: "pre-wrap",
-                    wordBreak: "break-word",
-                  }}
-                >
-                  {message}
-                </div>
+                {/* Why Lyzr recognised them */}
+                {recognition?.why && (
+                  <div className="mb-5">
+                    <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "#B0937F", marginBottom: 8 }}>
+                      Why Lyzr recognised {companyName}
+                    </div>
+                    <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14.5, color: "#2A1F1A", lineHeight: 1.6 }}>
+                      {recognition.why}
+                    </p>
+                  </div>
+                )}
 
-                {/* Buttons */}
+                {/* Named agentic AI work */}
+                {recognition?.work && recognition.work.length > 0 && (
+                  <div className="mb-6">
+                    <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "#B0937F", marginBottom: 10 }}>
+                      Notable agentic AI work
+                    </div>
+                    <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 9 }}>
+                      {recognition.work.map((item) => (
+                        <li key={item} style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
+                          <span style={{ marginTop: 7, width: 6, height: 6, borderRadius: 999, background: "#EC7943", flexShrink: 0 }} />
+                          <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: "#3A2E28", lineHeight: 1.45 }}>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {/* Share buttons */}
                 <div className="flex flex-col gap-3">
-                  <button
-                    onClick={handleCopy}
-                    className="w-full flex items-center justify-center gap-2 py-3 rounded-full text-[13px] font-semibold transition-all hover:opacity-90"
-                    style={{
-                      background: copied ? "#2A1F1A" : "#6B4C4C",
-                      color: "#F2EDE8",
-                      fontFamily: "'DM Sans', sans-serif",
-                    }}
-                  >
-                    {copied ? <Check size={14} /> : <Copy size={14} />}
-                    {copied ? "Copied!" : "Copy Message"}
-                  </button>
-
+                  <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12.5, color: "#8A6060" }}>
+                    Share the recognition
+                  </div>
                   <div className="flex gap-3">
                     <button
                       onClick={handleLinkedIn}

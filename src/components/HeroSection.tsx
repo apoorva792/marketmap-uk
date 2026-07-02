@@ -5,10 +5,10 @@ const scrollTo = (id: string) =>
 
 const HeroSection = () => {
   return (
-    <section className="pt-14 sm:pt-20 lg:pt-24 pb-12 px-5 sm:px-10 lg:px-16">
-      <div className="max-w-[1280px] mx-auto">
-        {/* Centered editorial title — occupies the hero */}
-        <div className="text-center flex flex-col items-center">
+    <section className="pt-12 sm:pt-16 lg:pt-24 pb-12 px-5 sm:px-10 lg:px-16">
+      <div className="max-w-[1280px] mx-auto flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
+        {/* LEFT: title block */}
+        <div className="w-full lg:w-[48%] flex flex-col items-center lg:items-start text-center lg:text-left">
           {/* Market map pill */}
           <div
             className="inline-flex items-center px-4 py-1.5 rounded-full mb-6"
@@ -28,7 +28,7 @@ const HeroSection = () => {
           {/* Big headline */}
           <h1 style={{
             fontFamily: "'Playfair Display', serif",
-            fontSize: "clamp(36px, 5.5vw, 60px)",
+            fontSize: "clamp(34px, 4.6vw, 58px)",
             fontWeight: 400,
             color: "#2A1F1A",
             lineHeight: 1.06,
@@ -56,7 +56,7 @@ const HeroSection = () => {
             fontSize: 17,
             color: "#7A6A60",
             lineHeight: 1.6,
-            maxWidth: 640,
+            maxWidth: 480,
             marginBottom: 28,
           }}>
             The mid-market services firms shipping agentic AI in production &mdash;
@@ -87,8 +87,8 @@ const HeroSection = () => {
           </div>
         </div>
 
-        {/* Moving logo marquee */}
-        <div style={{ marginTop: "clamp(40px, 6vw, 72px)" }}>
+        {/* RIGHT: square moving logo marquee */}
+        <div className="w-full lg:w-[52%] flex justify-center">
           <LogoMarquee />
         </div>
       </div>

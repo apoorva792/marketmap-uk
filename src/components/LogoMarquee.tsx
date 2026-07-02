@@ -20,12 +20,13 @@ type Logo = { name: string; url: string };
 const logos: Logo[] = companies.map((c) => ({ name: c.name, url: getCompanyLogoUrl(c.name, c.website) }));
 
 const rot = (a: Logo[], n: number): Logo[] => [...a.slice(n), ...a.slice(0, n)];
-const third = Math.max(1, Math.ceil(logos.length / 3));
-// Every row shows all firms (rotated), so each row always fills the width.
+const q = Math.max(1, Math.ceil(logos.length / 4));
+// Four rows, each showing all firms (rotated) so every row always fills the width.
 const rows: { items: Logo[]; dir: "left" | "right"; speed: number }[] = [
-  { items: logos, dir: "left", speed: 48 },
-  { items: rot(logos, third), dir: "right", speed: 58 },
-  { items: rot(logos, third * 2), dir: "left", speed: 44 },
+  { items: logos, dir: "left", speed: 40 },
+  { items: rot(logos, q), dir: "right", speed: 48 },
+  { items: rot(logos, q * 2), dir: "left", speed: 36 },
+  { items: rot(logos, q * 3), dir: "right", speed: 44 },
 ];
 
 const LogoMarquee = () => (
@@ -50,44 +51,49 @@ const LogoMarquee = () => (
     <style>{`
       .mq-wrap {
         width: 100%;
+        max-width: 500px;
+        aspect-ratio: 1 / 1;
+        margin-inline: auto;
         display: flex;
         flex-direction: column;
-        gap: clamp(12px, 1.6vw, 18px);
-        padding: clamp(22px, 3vw, 34px) 0;
-        border-radius: 28px;
-        background: linear-gradient(180deg, #F7F1EA 0%, #F0E6DB 100%);
+        justify-content: center;
+        gap: clamp(10px, 1.2vw, 14px);
+        padding: clamp(16px, 2vw, 22px);
+        border-radius: 30px;
+        background: linear-gradient(180deg, #F7F1EA 0%, #EFE4D8 100%);
         border: 1px solid rgba(74, 47, 45, 0.08);
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 24px 60px rgba(42, 26, 24, 0.06);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 26px 60px rgba(42, 26, 24, 0.08);
         overflow: hidden;
       }
       .mq-row {
+        flex: 1;
+        display: flex;
+        align-items: center;
         overflow: hidden;
-        -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
-        mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+        -webkit-mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent);
+        mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent);
       }
-      .mq-track { display: flex; gap: clamp(12px, 1.6vw, 18px); width: max-content; will-change: transform; }
+      .mq-track { display: flex; align-items: center; gap: clamp(10px, 1.2vw, 14px); height: 100%; width: max-content; will-change: transform; }
       .mq-row:hover .mq-track { animation-play-state: paused; }
       .mq-tile {
         flex: 0 0 auto;
-        width: clamp(78px, 7vw, 104px);
-        height: clamp(78px, 7vw, 104px);
-        border-radius: 20px;
+        height: 86%;
+        aspect-ratio: 1 / 1;
+        border-radius: 18px;
         background: #FFFFFF;
         border: 1px solid rgba(74, 47, 45, 0.06);
-        box-shadow: 0 8px 20px rgba(74, 47, 45, 0.07);
+        box-shadow: 0 8px 18px rgba(74, 47, 45, 0.08);
         display: flex;
         align-items: center;
         justify-content: center;
         cursor: pointer;
         transition: transform 160ms ease, box-shadow 160ms ease;
       }
-      .mq-tile:hover { transform: translateY(-5px) scale(1.04); box-shadow: 0 16px 30px rgba(74, 47, 45, 0.14); }
+      .mq-tile:hover { transform: translateY(-4px) scale(1.05); box-shadow: 0 16px 30px rgba(74, 47, 45, 0.16); }
       .mq-tile img { width: 62%; height: 62%; object-fit: contain; }
       @keyframes mq-left { from { transform: translateX(0); } to { transform: translateX(-50%); } }
       @keyframes mq-right { from { transform: translateX(-50%); } to { transform: translateX(0); } }
-      @media (prefers-reduced-motion: reduce) {
-        .mq-track { animation: none !important; }
-      }
+      @media (prefers-reduced-motion: reduce) { .mq-track { animation: none !important; } }
     `}</style>
   </div>
 );
